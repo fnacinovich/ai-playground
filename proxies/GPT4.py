@@ -41,7 +41,7 @@ def read_text_GPT4(base64_image):
       return json_string
 
 def get_text_boxes_GPT4(base64_image):
-        api_key = userdata.get('OPENAI_API_KEY')
+    api_key = userdata.get('OPENAI_API_KEY')
     
     client = OpenAI(api_key=api_key)
 
