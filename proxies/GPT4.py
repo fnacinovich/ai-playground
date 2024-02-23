@@ -39,3 +39,42 @@ def read_text_GPT4(base64_image):
       json_string = json.dumps(jsonObj, indent=4)
     finally: 
       return json_string
+
+def get_text_boxes_GPT4(base64_image):
+        api_key = userdata.get('OPENAI_API_KEY')
+    
+    client = OpenAI(api_key=api_key)
+
+    response = client.chat.completions.create(
+        model='gpt-4-vision-preview', 
+        messages=[
+          {
+            "role": "user",
+            "content": [
+                {"type": "text", "text": "Your goal is to find the text areas inside the image. The image contains a page of text."},
+                {"type": "text", "text": "The output must be an array of all the image areas containing text."},
+                {"type": "text", "text": "Each area is defined by the coordinates of its left-upper corner and its righ-bottom corner, pixelwise. Use the upper-left corner of the image as the (0,0) coordinate."},
+                {"type": "text", "text": "Return JSON document with data. Only return JSON not other text. Avoid newlines and any text that is not pure JSON. Use the following JSON as a template: {\"text-boxes\":[{\"id\":\"1\",\"left_upper\":{\"x\":1,\"y\":5},\"right_bottom\":{\"x\":4,\"y\":2}},{\"id\":\"2\",\"left_upper\":{\"x\":2,\"y\":6},\"right_bottom\":{\"x\":5,\"y\":3}},{\"id\":\"3\",\"left_upper\":{\"x\":3,\"y\":7},\"right_bottom\":{\"x\":6,\"y\":4}}]}."},
+                {"type": "text", "text": "If the image contains partial pages ignore them and all the text in them."},
+                {"type": "text", "text": "Try your best to read all the text in the image. Do not leave anything out."},
+                {"type": "text", "text": "Before sending the response validate the JSON and fix it in case it is not a valid JSON."},
+                {
+                    "type": "image_url",
+                    "image_url": {
+                      "url": f"data:image/png;base64,{base64_image}"
+                    }
+                }
+            ],
+          }
+        ],
+        max_tokens=4096,
+    )
+
+    json_string = response.choices[0].message.content
+    json_string = json_string.replace("json\n", "").replace("\n", "").replace("```", "")
+
+    try:
+      jsonObj = json.loads(json_string)
+      json_string = json.dumps(jsonObj, indent=4)
+    finally: 
+      return json_string
