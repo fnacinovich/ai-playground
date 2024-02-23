@@ -52,7 +52,9 @@ def get_text_boxes_GPT4(base64_image):
             "role": "user",
             "content": [
                 {"type": "text", "text": "Your goal is to find the text areas inside the image. The image contains a page of text."},
-                {"type": "text", "text": "The output must be an array of all the image areas containing text."},
+                {"type": "text", "text": "The output must be an array of all the image areas containing text and text only. Cut away any area without a text."},
+                {"type": "text", "text": "Each area should contain a coherent block of text. A chapter, a paragraph or a single block of notes, fo example."},
+                {"type": "text", "text": "The areas you are creating must not overlap each other"},
                 {"type": "text", "text": "Each area is defined by the coordinates of its left-upper corner and its righ-bottom corner, pixelwise. Use the upper-left corner of the image as the (0,0) coordinate."},
                 {"type": "text", "text": "Return JSON document with data. Only return JSON not other text. Avoid newlines and any text that is not pure JSON. Use the following JSON as a template: {\"text-boxes\":[{\"id\":\"1\",\"left_upper\":{\"x\":1,\"y\":5},\"right_bottom\":{\"x\":4,\"y\":2}},{\"id\":\"2\",\"left_upper\":{\"x\":2,\"y\":6},\"right_bottom\":{\"x\":5,\"y\":3}},{\"id\":\"3\",\"left_upper\":{\"x\":3,\"y\":7},\"right_bottom\":{\"x\":6,\"y\":4}}]}."},
                 {"type": "text", "text": "If the image contains partial pages ignore them and all the text in them."},
